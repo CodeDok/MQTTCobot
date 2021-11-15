@@ -18,6 +18,8 @@ class HiveMQ(MqttObserver):
         else:
             self.__setup_auth_connection(username, password)
 
+
+
     def __setup_connection(self):
         print("Connect to " + self.broker + " without TLS")
         self.client = paho.Client(
@@ -25,6 +27,8 @@ class HiveMQ(MqttObserver):
         self.client.connect(self.broker, self.port)
         self.__setup_callbacks()
         self.client.loop_start()
+        if(not self.client.is_connected):
+            raise MqttConnectError("Error while connecting to" + self.broker)
 
     def __setup_auth_connection(self, username, password):
         print("Connect to " + self.broker + " with TLS")
@@ -45,7 +49,6 @@ class HiveMQ(MqttObserver):
 
     def publish(self, topic, data, qos_level):
         print("Publishing:" + str(topic) + " : " + str(data))
-
         try:
             msg_info = self.client.publish(topic, str(data), qos_level)
             msg_info.wait_for_publish(10)
@@ -63,20 +66,13 @@ class HiveMQ(MqttObserver):
     def __setup_callbacks(self):
         self.client.on_publish = self.on_publish
         self.client.on_connect = self.on_connect
-        self.client.on_subscribe = self.on_subscribe
-        self.client.on_message = self.on_message
+
 
     def on_connect(self, client, userdata, flags, rc, properties=None):
-        print("CONNACK received with code %s." % rc)
+        print("Connection State: %s." % rc)
 
     # with this callback you can see if your publish was successful
     def on_publish(self, client, userdata, mid, properties=None):
-        print("mid: " + str(mid))
+        print("Message-ID: " + str(mid))
 
-    # print which topic was subscribed to
-    def on_subscribe(self, client, userdata, mid, granted_qos, properties=None):
-        print("Subscribed: " + str(mid) + " " + str(granted_qos))
 
-    # print message, useful for checking if it was successful
-    def on_message(self, client, userdata, msg):
-        print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))

@@ -95,13 +95,12 @@ def main():
             time.sleep(1)
 
     except KeyboardInterrupt:
-        print("Shutting down")
+        print("Keyboard Interrupt detected! Shutting down")
         execution.clear()
         c_thread.join()
         cobot.disconnect()
 
     except Exception as ex:
-        print("tstsat" + ex)
         sys.exit()
 
 if __name__ == "__main__":

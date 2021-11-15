@@ -22,11 +22,8 @@ class Cobot(MqttObservable, threading.Thread):
         self.port = port
         self.configfile = configfile
         self.frequency = 1
-
-    def get_controller_version(self):
-        major, minor, bugfix, build = self.interface.get_controller_version()
-        return major + "." + minor + "." + bugfix + "." + build
-
+        
+        
     def __setup_connection(self):
         # Connect to Robot
         self.interface = rtde.RTDE(self.ipaddress, self.port)
@@ -35,12 +32,19 @@ class Cobot(MqttObservable, threading.Thread):
             raise CobotConfigError("Error with data configuration")
         if not self.interface.send_start():
             raise CobotConnectionError("Error while trying to start synchronisation")
+        print("Controller Version: " + self.get_controller_version())
 
     def __setup_config(self):
         self.config = rtde_config.ConfigFile(self.configfile)
         self.output_names, self.output_types = self.config.get_recipe(
             'dataOutput')
         return self.interface.send_output_setup(self.output_names, self.output_types, self.frequency)
+
+    def get_controller_version(self):
+        major, minor, bugfix, build = self.interface.get_controller_version()
+        version = (major, minor, bugfix, build)
+        return "%i.%i.%i.%i" % version
+
 
     def start_data_stream(self, running, interval):
         try:
@@ -59,7 +63,6 @@ class Cobot(MqttObservable, threading.Thread):
             sys.exit()
 
     def disconnect(self):
-        print("Shutting down connection to robot")
         self.interface.disconnect()
 
     def attach(self, observer):

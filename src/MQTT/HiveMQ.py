@@ -3,8 +3,8 @@ import paho.mqtt.client as paho
 from paho import mqtt
 import random
 
-from Interfaces.MqttObserver import MqttObserver
-from MQTT.MqttError import MqttConnectError, MqttPublishError
+from interfaces.MqttObserver import MqttObserver
+from mqtt.MqttError import MqttConnectError, MqttPublishError
 
 
 class HiveMQ(MqttObserver):

@@ -3,14 +3,14 @@ import json
 import threading
 import time
 import sys
-from Cobot.CobotError import CobotConfigError, CobotConnectionError
 sys.path.append('../lib')
 
+from cobot.CobotError import CobotConfigError, CobotConnectionError
 import rtde.rtde_config as rtde_config
 import rtde.rtde as rtde
 from threading import Thread
-from MQTT.HiveMQ import HiveMQ
-from Interfaces.MqttObservable import MqttObservable
+from mqtt.HiveMQ import HiveMQ
+from interfaces.MqttObservable import MqttObservable
 
 
 class Cobot(MqttObservable, threading.Thread):
@@ -23,7 +23,7 @@ class Cobot(MqttObservable, threading.Thread):
         self.configfile = configfile
         self.frequency = 1
         
-        
+
     def __setup_connection(self):
         # Connect to Robot
         self.interface = rtde.RTDE(self.ipaddress, self.port)

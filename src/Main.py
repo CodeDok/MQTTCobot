@@ -89,10 +89,10 @@ def main():
         execution = threading.Event()
         execution.set()
         c_thread = threading.Thread(
-            target=cobot.start_data_stream, args=(execution, ))
+            target=cobot.start_data_stream, args=(execution, 10))
         c_thread.start()
-        while True:
-            time.sleep(100)
+        while execution.is_set():
+            time.sleep(1)
 
     except KeyboardInterrupt:
         print("Shutting down")
@@ -101,8 +101,8 @@ def main():
         cobot.disconnect()
 
     except Exception as ex:
-        print(ex)
+        print("tstsat" + ex)
         sys.exit()
 
 if __name__ == "__main__":
-    test()
+    main()

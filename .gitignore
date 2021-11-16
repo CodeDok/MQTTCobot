@@ -3,3 +3,4 @@
 Server
 _pycache_/
 *.pyc
+src/tests

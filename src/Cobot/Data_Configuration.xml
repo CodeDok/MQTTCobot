@@ -2,7 +2,8 @@
 <rtde_config>
 	<recipe key="dataOutput">
 		<field name="timestamp" type="DOUBLE"/>
-		<!-- <field name="target_q" type="VECTOR6D"/>
+		 <field name="target_q" type="VECTOR6D"/>
+		 <!--
 		<field name="target_qd" type="VECTOR6D"/>
 		<field name="target_qdd" type="VECTOR6D"/> -->
 		<!-- <field name="target_current" type="VECTOR6D"/> -->

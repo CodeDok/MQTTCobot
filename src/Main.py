@@ -17,6 +17,7 @@ parser.add_argument(
     "--config", 
     help="output configuration as an xml file"
 )
+parser.add_argument("--interval", default=10, help="Interval at which the data is extracted from the cobot (DEFAULT=10)")
 # Mqtt
 parser.add_argument("--broker", default="localhost", help="ip address of the broker (DEFAULT=localhost)")
 parser.add_argument(

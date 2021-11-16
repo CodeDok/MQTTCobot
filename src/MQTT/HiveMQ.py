@@ -9,6 +9,8 @@ from mqtt.MqttError import MqttConnectError, MqttPublishError
 
 class HiveMQ(MqttObserver):
 
+    TIMEOUT_TIME = 10
+
     def __init__(self, username, password, broker, port):
         self.broker = broker
         self.port = port
@@ -39,8 +41,11 @@ class HiveMQ(MqttObserver):
         self.client.username_pw_set(username, password)
         self.client.connect(self.broker, self.port)
         self.client.loop_start()
-        if(not self.client.is_connected()):
-            raise MqttConnectError("Error while connecting to " + self.broker)
+        timer = 0
+        while not self.client.is_connected():
+            time.sleep(1)
+            if (timer == HiveMQ.TIMEOUT_TIME):
+                 raise MqttConnectError("Error while connecting to " + self.broker)
         print("Connected")
 
 
@@ -56,7 +61,7 @@ class HiveMQ(MqttObserver):
                 raise MqttPublishError()
         except (ValueError, RuntimeError):
             raise MqttPublishError("Error while publishing: " + topic + " : " + str(data))
-        print("Published: " + str(topic) + " : " + str(data))
+        print("Published: " + str(topic) + " : " + str(data) + "\n")
 
 
     def disconnect(self):

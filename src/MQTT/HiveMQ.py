@@ -44,8 +44,8 @@ class HiveMQ(MqttObserver):
 
 
 
-    def update(self, topic, data, qos):
-        self.publish(topic, data, qos)
+    def update(self, id, output_name, data, qos):
+        self.publish("cobot/" + str(id) + "/" + str(output_name), data, qos)
 
     def publish(self, topic, data, qos_level):
         print("Publishing:" + str(topic) + " : " + str(data))

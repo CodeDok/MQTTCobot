@@ -1,4 +1,5 @@
 import argparse
+import socket
 import sys
 import threading
 from cobot.Cobot import Cobot
@@ -9,6 +10,7 @@ programm_desc = "Connects to an UR Robot, fetches data and sends it to a MQTT br
 
 parser = argparse.ArgumentParser(programm_desc)
 # Cobot
+parser.add_argument("--cid", default=socket.gethostname(), help="unique identifier of the cobot (DEFAULT: Hostname of gateway)")
 parser.add_argument("--cobot", default="localhost", help="ip-address of the robot (DEFAULT=localhost)")
 parser.add_argument("--cport", type=int, default=30004, help="port of the robot (DEFAULT=30004)")
 parser.add_argument(
@@ -37,7 +39,7 @@ def main():
             broker=arguments.broker,
             port=arguments.bport
         )
-        cobot = Cobot(arguments.cobot, arguments.cport, arguments.config)
+        cobot = Cobot(arguments.cid, arguments.cobot, arguments.cport, arguments.config)
         cobot.attach(hivemq)
         execution = threading.Event()
         execution.set()
@@ -53,7 +55,7 @@ def main():
         c_thread.join()
         cobot.disconnect()
 
-    except Exception as ex:
+    except Exception:
         sys.exit()
 
 if __name__ == "__main__":

@@ -17,7 +17,8 @@ class Cobot(MqttObservable, threading.Thread):
 
 
 
-    def __init__(self, ipaddress, port, configfile):
+    def __init__(self, id, ipaddress, port, configfile):
+        self.id = id
         self.ipaddress = ipaddress
         self.port = port
         self.configfile = configfile
@@ -56,7 +57,7 @@ class Cobot(MqttObservable, threading.Thread):
                     for i in range(len(self.output_names)):
                         data2 = data.__dict__[self.output_names[i]]
                         print(str(self.output_names[i]) + " : " + str(data2))
-                        self.notify("cobot/" + self.output_names[i], data2, 0)
+                        self.notify(self.id, self.output_names[i], data2, 0)
         except Exception as ex:
             print(ex)
             running.clear()
@@ -71,6 +72,6 @@ class Cobot(MqttObservable, threading.Thread):
     def detach(self, observer):
         self._observers.remove(observer)
 
-    def notify(self, topic, data, qos):
+    def notify(self, id, topic, data, qos):
         for observer in self._observers:
-            observer.update(topic, data, qos)
+            observer.update(id, topic, data, qos)

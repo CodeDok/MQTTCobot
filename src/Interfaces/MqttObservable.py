@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from Interfaces.MqttObserver import MqttObserver
+from interfaces.MqttObserver import MqttObserver
 
 
 class MqttObservable(ABC):

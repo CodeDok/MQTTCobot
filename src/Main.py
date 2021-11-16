@@ -55,8 +55,8 @@ def main():
         c_thread.join()
         cobot.disconnect()
 
-    except Exception:
-        sys.exit()
+    except Exception as ex:
+        raise SystemExit(ex)
 
 if __name__ == "__main__":
     main()

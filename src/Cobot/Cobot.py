@@ -56,7 +56,7 @@ class Cobot(MqttObservable, threading.Thread):
                 if data is not None:
                     for i in range(len(self.output_names)):
                         data2 = data.__dict__[self.output_names[i]]
-                        print(str(self.output_names[i]) + " : " + str(data2))
+                        print("Cobot:" + str(self.output_names[i]) + " : " + str(data2))
                         self.notify(self.id, self.output_names[i], data2, 0)
         except Exception as ex:
             print(ex)

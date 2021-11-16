@@ -13,11 +13,13 @@ class HiveMQ(MqttObserver):
         self.broker = broker
         self.port = port
         self.client_id = f'cobot-client-{random.randint(0, 1000)}'
-        if(username is None):
-            self.__setup_connection()
-        else:
-            self.__setup_auth_connection(username, password)
-
+        try:
+            if(username is None):
+                self.__setup_connection()
+            else:
+                self.__setup_auth_connection(username, password)
+        except Exception as ex:
+            raise MqttConnectError(ex)
 
 
     def __setup_connection(self):
@@ -25,10 +27,9 @@ class HiveMQ(MqttObserver):
         self.client = paho.Client(
             self.client_id, userdata=None, protocol=paho.MQTTv5)
         self.client.connect(self.broker, self.port)
-        self.__setup_callbacks()
         self.client.loop_start()
-        if(not self.client.is_connected):
-            raise MqttConnectError("Error while connecting to" + self.broker)
+        print("Connected")
+        
 
     def __setup_auth_connection(self, username, password):
         print("Connect to " + self.broker + " with TLS")
@@ -37,10 +38,10 @@ class HiveMQ(MqttObserver):
         self.client.tls_set(tls_version=mqtt.client.ssl.PROTOCOL_TLS)
         self.client.username_pw_set(username, password)
         self.client.connect(self.broker, self.port)
-        self.__setup_callbacks()
         self.client.loop_start()
-        if(not self.client.is_connected):
-            raise MqttConnectError("Error while connecting to" + self.broker)
+        if(not self.client.is_connected()):
+            raise MqttConnectError("Error while connecting to " + self.broker)
+        print("Connected")
 
 
 
@@ -48,31 +49,19 @@ class HiveMQ(MqttObserver):
         self.publish("cobot/" + str(id) + "/" + str(output_name), data, qos)
 
     def publish(self, topic, data, qos_level):
-        print("Publishing:" + str(topic) + " : " + str(data))
         try:
             msg_info = self.client.publish(topic, str(data), qos_level)
             msg_info.wait_for_publish(10)
+            if(not msg_info.is_published):
+                raise MqttPublishError()
         except (ValueError, RuntimeError):
-            raise MqttPublishError("Error while publishing:" + topic + " : " + str(data))
+            raise MqttPublishError("Error while publishing: " + topic + " : " + str(data))
+        print("Published: " + str(topic) + " : " + str(data))
 
 
     def disconnect(self):
         print("Disconnecting")
         self.client.loop_stop()
         self.client.disconnect()
-
-
-
-    def __setup_callbacks(self):
-        self.client.on_publish = self.on_publish
-        self.client.on_connect = self.on_connect
-
-
-    def on_connect(self, client, userdata, flags, rc, properties=None):
-        print("Connection State: %s." % rc)
-
-    # with this callback you can see if your publish was successful
-    def on_publish(self, client, userdata, mid, properties=None):
-        print("Message-ID: " + str(mid))
 
 

@@ -20,6 +20,7 @@ class HiveMQ(MqttObserver):
                 self.__setup_connection()
             else:
                 self.__setup_auth_connection(username, password)
+            print("Connected")
         except Exception as ex:
             raise MqttConnectError(ex)
 
@@ -30,7 +31,6 @@ class HiveMQ(MqttObserver):
             self.client_id, userdata=None, protocol=paho.MQTTv5)
         self.client.connect(self.broker, self.port)
         self.client.loop_start()
-        print("Connected")
         
 
     def __setup_auth_connection(self, username, password):
@@ -47,7 +47,6 @@ class HiveMQ(MqttObserver):
             timer += 1
             if (timer == HiveMQ.TIMEOUT_TIME):
                  raise MqttConnectError("Timeout: Error while connecting to " + self.broker)
-        print("Connected")
 
 
 

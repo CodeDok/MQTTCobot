@@ -44,8 +44,9 @@ class HiveMQ(MqttObserver):
         timer = 0
         while not self.client.is_connected():
             time.sleep(1)
+            timer += 1
             if (timer == HiveMQ.TIMEOUT_TIME):
-                 raise MqttConnectError("Error while connecting to " + self.broker)
+                 raise MqttConnectError("Timeout: Error while connecting to " + self.broker)
         print("Connected")
 
 

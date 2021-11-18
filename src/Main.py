@@ -18,7 +18,6 @@ parser.add_argument(
     help="output configuration as an xml file"
 )
 parser.add_argument("--frequency", default=1, help="Frequency of the data extraction (DEFAULT=1)")
-parser.add_argument("--interval", default=10, help="Interval at which the data is extracted from the cobot (DEFAULT=10)")
 # Mqtt
 parser.add_argument("--broker", default="localhost", help="ip address of the broker (DEFAULT=localhost)")
 parser.add_argument(
@@ -46,7 +45,7 @@ def main():
         execution = threading.Event()
         execution.set()
         c_thread = threading.Thread(
-            target=cobot.start_data_stream, args=(execution, 10))
+            target=cobot.start_data_stream, args=(execution, ))
         c_thread.start()
         while execution.is_set():
             time.sleep(1)

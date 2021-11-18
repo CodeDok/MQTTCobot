@@ -47,11 +47,10 @@ class Cobot(MqttObservable, threading.Thread):
         return "%i.%i.%i.%i" % version
 
 
-    def start_data_stream(self, running, interval):
+    def start_data_stream(self, running):
         try:
             self.__setup_connection()
             while running.is_set():
-                time.sleep(interval)
                 data = self.interface.receive_buffered()
                 if data is not None:
                     for i in range(len(self.output_names)):

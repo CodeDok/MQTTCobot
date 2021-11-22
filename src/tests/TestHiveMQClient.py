@@ -3,6 +3,8 @@ import unittest
 from HiveMQClient import HiveMQClient
 
 class TestHiveMQClient(unittest.TestCase):
+    """tests for the HiveMQClient class"""
+
     
     def test_auth_connect(self):
         hivemq = HiveMQClient(

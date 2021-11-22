@@ -6,7 +6,8 @@ from interfaces.MqttObserver import MqttObserver
 
 
 class MqttObservable(ABC):
-
+    """observable for mqtt"""
+    
     _observers: List[MqttObserver] = []
 
     @abstractmethod

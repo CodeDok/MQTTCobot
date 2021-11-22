@@ -34,6 +34,7 @@ arguments = parser.parse_args()
 
 
 def main():
+    """Connects to the cobot(separate thread) and the mqtt broker."""
     try:
         hivemq = HiveMQClient(
             username=arguments.username,

@@ -5,7 +5,9 @@ from cobot.Cobot import Cobot
 from interfaces.MqttObserver import MqttObserver
 
 class TestCobot(unittest.TestCase):
+    """tests for the cobot class"""
 
+    
     def setUp(self):
         self.cobot = Cobot('192.168.56.101', 30004, 'Cobot/Data_Configuration.xml')
 

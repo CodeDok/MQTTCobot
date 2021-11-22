@@ -10,11 +10,11 @@ class MqttObservable(ABC):
     _observers: List[MqttObserver] = []
 
     @abstractmethod
-    def attach(self, observer):
+    def attach(self, MqttObserver):
         "Attach an observer"
 
     @abstractmethod
-    def detach(self, observer):
+    def detach(self, MqttObserver):
         "Detach an observer"
 
     @abstractmethod
@@ -22,5 +22,5 @@ class MqttObservable(ABC):
         "Notify all observers "
 
     @abstractmethod
-    def notify(self, topic, data, qos):
-        "Notify all observers about new mqtt message"
+    def notify(self, topic, data):
+        "Notify all observers about new message"

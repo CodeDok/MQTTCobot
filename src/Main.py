@@ -2,8 +2,9 @@ import argparse
 import socket
 import sys
 import threading
+from mqtt.HiveMQClient import HiveMQClient
 from cobot.Cobot import Cobot
-from mqtt.HiveMQ import HiveMQ
+from mqtt.HiveMQClient import HiveMQClient
 import time
 
 programm_desc = "Connects to an UR Robot, fetches data and sends it to a MQTT broker."
@@ -34,14 +35,16 @@ arguments = parser.parse_args()
 
 def main():
     try:
-        hivemq = HiveMQ(
+        hivemq = HiveMQClient(
             username=arguments.username,
             password=arguments.password,
             broker=arguments.broker,
             port=arguments.bport
         )
+        hivemq.connect()
         cobot = Cobot(arguments.cid, arguments.cobot, arguments.cport, arguments.config)
         cobot.attach(hivemq)
+        cobot.connect()
         execution = threading.Event()
         execution.set()
         c_thread = threading.Thread(

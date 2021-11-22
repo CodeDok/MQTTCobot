@@ -4,10 +4,13 @@ from paho import mqtt
 import random
 
 from interfaces.MqttObserver import MqttObserver
+from interfaces.MqttPublishClient import MqttPublishClient
 from mqtt.MqttError import MqttConnectError, MqttPublishError
 
-
-class HiveMQ(MqttObserver):
+"""
+MQTT Client with only publishing functionality
+"""
+class HiveMQClient(MqttPublishClient, MqttObserver):
 
     TIMEOUT_TIME = 10
 
@@ -15,15 +18,18 @@ class HiveMQ(MqttObserver):
         self.broker = broker
         self.port = port
         self.client_id = f'cobot-client-{random.randint(0, 1000)}'
+        self.username = username
+        self.password = password
+        
+    def connect(self):
         try:
-            if(username is None):
+            if(self.username is None):
                 self.__setup_connection()
             else:
-                self.__setup_auth_connection(username, password)
+                self.__setup_auth_connection(self.username, self.password)
             print("Connected")
         except Exception as ex:
             raise MqttConnectError(ex)
-
 
     def __setup_connection(self):
         print("Connect to " + self.broker + " without TLS")
@@ -45,15 +51,17 @@ class HiveMQ(MqttObserver):
         while not self.client.is_connected():
             time.sleep(1)
             timer += 1
-            if (timer == HiveMQ.TIMEOUT_TIME):
+            if (timer == HiveMQClient.TIMEOUT_TIME):
                  raise MqttConnectError("Timeout: Error while connecting to " + self.broker)
 
 
 
-    def update(self, id, output_name, data, qos):
-        self.publish("cobot/" + str(id) + "/" + str(output_name), data, qos)
+    def update(self, id, output_name, data):
+        self.publish("cobot/" + str(id) + "/" + str(output_name), data, 0)
 
     def publish(self, topic, data, qos_level):
+        if not self.is_connected():
+            raise MqttConnectError("Not connected to the broker")
         try:
             msg_info = self.client.publish(topic, str(data), qos_level)
             msg_info.wait_for_publish(10)
@@ -62,6 +70,7 @@ class HiveMQ(MqttObserver):
         except (ValueError, RuntimeError):
             raise MqttPublishError("Error while publishing: " + topic + " : " + str(data))
         print("Published: " + str(topic) + " : " + str(data) + "\n")
+        return True
 
 
     def disconnect(self):
@@ -69,4 +78,6 @@ class HiveMQ(MqttObserver):
         self.client.loop_stop()
         self.client.disconnect()
 
+    def is_connected(self):
+        return self.client.is_connected()
 
